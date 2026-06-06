@@ -22,7 +22,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
-        <BrowserRouter>
+        <BrowserRouter basename="/SlowPour">
           <Routes>
             <Route element={<AppLayout />}>
               <Route path="/" element={<Welcome />} />
