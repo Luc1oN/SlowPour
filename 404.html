@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    const path = window.location.pathname.replace('/SlowPour', '');
+    const search = window.location.search;
+    window.location.replace('/SlowPour/' + '#' + path + search);
+  </script>
+</head>
+</html>
