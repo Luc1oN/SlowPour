@@ -18,55 +18,79 @@ export default function StageCard({ index, currentStage, whiskeyName }) {
   const isPast = index < currentStage
   const isCurrent = index === currentStage
   const isFuture = index > currentStage
+  const isBreak = stageLabels[index] === 'Break'
+  const isFinal = stageLabels[index] === 'Final Results'
+  const isMystery = stageLabels[index] === 'Mystery Dram'
 
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.08 }}
-      className={`flex items-center gap-4 p-4 rounded-lg border transition-all ${
+      transition={{ delay: index * 0.06 }}
+      className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
         isCurrent
-          ? 'border-primary/50 bg-primary/10'
+          ? 'border-primary/50 bg-gradient-to-r from-primary/12 to-primary/4 shadow-sm'
           : isPast
-          ? 'border-border/50 bg-secondary/50'
-          : 'border-border/30 bg-card/50'
+          ? 'border-border/30 bg-secondary/30 opacity-60'
+          : isBreak || isFinal
+          ? 'border-border/20 bg-card/30'
+          : 'border-border/40 bg-card/60'
       }`}
     >
-      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+      {/* Icon */}
+      <div className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
         isCurrent
-          ? 'bg-primary text-primary-foreground'
+          ? 'bg-primary text-primary-foreground shadow-sm'
           : isPast
-          ? 'bg-accent text-accent-foreground'
-          : 'bg-secondary text-muted-foreground'
+          ? 'bg-accent/70 text-accent-foreground'
+          : isBreak || isFinal || isMystery
+          ? 'bg-secondary text-muted-foreground'
+          : 'bg-secondary border border-border text-muted-foreground'
       }`}>
         {isPast ? (
-          <Check className="w-4 h-4" strokeWidth={2} />
-        ) : isFuture ? (
-          <span className="text-xs font-medium">{index + 1}</span>
+          <Check className="w-4 h-4" strokeWidth={2.5} />
+        ) : isMystery ? (
+          <span>🔒</span>
+        ) : isFinal ? (
+          <span>🏆</span>
+        ) : isBreak ? (
+          <span>☕</span>
         ) : (
-          <Circle className="w-3 h-3 fill-current" />
+          <span>{index + 1}</span>
         )}
       </div>
 
+      {/* Content */}
       <div className="flex-1 min-w-0">
-        <span className={`text-sm font-medium ${
-          isCurrent ? 'text-primary' : isPast ? 'text-muted-foreground' : 'text-foreground/70'
+        <p className={`text-sm font-medium leading-tight ${
+          isCurrent
+            ? 'text-primary'
+            : isPast
+            ? 'text-muted-foreground'
+            : isBreak || isFinal
+            ? 'text-muted-foreground'
+            : 'text-foreground'
         }`}>
           {stageLabels[index]}
-        </span>
+        </p>
         {whiskeyName && (
           <p className={`text-xs mt-0.5 truncate ${
-            isCurrent ? 'text-primary/70' : 'text-muted-foreground/70'
+            isCurrent ? 'text-primary/70' : 'text-muted-foreground/60'
           }`}>
             {whiskeyName}
           </p>
         )}
       </div>
 
+      {/* Right side */}
       {isCurrent && (
-        <span className="flex-shrink-0 text-[10px] uppercase tracking-widest text-primary font-semibold">
-          Now
-        </span>
+        <div className="flex-shrink-0 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          <span className="text-[10px] uppercase tracking-widest text-primary font-semibold">Now</span>
+        </div>
+      )}
+      {isPast && (
+        <span className="flex-shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground/50">Done</span>
       )}
     </motion.div>
   )
