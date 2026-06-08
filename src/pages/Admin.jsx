@@ -9,7 +9,10 @@ import { Switch } from '../components/ui/switch'
 import GoldDivider from '../components/shared/GoldDivider'
 import { useToast } from '../components/ui/toast'
 import { stageLabels } from '../components/lineup/StageCard'
-import { Plus, Trash2, ChevronLeft, ChevronRight, Eye, Upload, Lock, Unlock } from 'lucide-react'
+import { Plus, Trash2, ChevronLeft, ChevronRight, Eye, Upload, Lock, Unlock, KeyRound } from 'lucide-react'
+
+const ADMIN_PASSWORD = 'scproductions'
+const STORAGE_KEY = 'slowpour_admin_auth'
 
 const emptyWhiskey = {
   name: '', distillery: '', age: '', abv: '', type: '', cask_type: '',
@@ -17,7 +20,52 @@ const emptyWhiskey = {
   round_number: 1, is_mystery: false, is_centrepiece: false, mystery_reason: '',
 }
 
+function AdminLogin() {
+  const [input, setInput] = useState('')
+  const [error, setError] = useState(false)
+
+  const handleSubmit = () => {
+    if (input === ADMIN_PASSWORD) {
+      localStorage.setItem(STORAGE_KEY, 'true')
+      window.location.reload()
+    } else {
+      setError(true)
+      setInput('')
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center px-6">
+      <div className="max-w-sm w-full text-center">
+        <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+          <KeyRound className="w-6 h-6 text-primary" strokeWidth={1.5} />
+        </div>
+        <h1 className="font-heading text-2xl font-semibold text-foreground mb-2">Host Access</h1>
+        <p className="text-sm text-muted-foreground mb-8">Enter the admin password to continue</p>
+        <GoldDivider />
+        <div className="space-y-3">
+          <Input
+            type="password"
+            placeholder="Password"
+            value={input}
+            onChange={(e) => { setInput(e.target.value); setError(false) }}
+            onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+            className={`text-center h-12 ${error ? 'border-destructive' : ''}`}
+          />
+          {error && <p className="text-xs text-destructive">Incorrect password</p>}
+          <Button onClick={handleSubmit} className="w-full h-12 font-heading text-lg">
+            Enter
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Admin() {
+  const isAuthed = localStorage.getItem(STORAGE_KEY) === 'true'
+  if (!isAuthed) return <AdminLogin />
+
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const { eventState, updateEventState } = useEventState()
@@ -130,7 +178,15 @@ export default function Admin() {
 
   return (
     <div className="px-5 py-8 max-w-lg mx-auto">
-      <h1 className="font-heading text-2xl font-semibold text-foreground">Host Admin</h1>
+      <div className="flex items-center justify-between mb-1">
+        <h1 className="font-heading text-2xl font-semibold text-foreground">Host Admin</h1>
+        <button
+          onClick={() => { localStorage.removeItem(STORAGE_KEY); window.location.reload() }}
+          className="text-xs text-muted-foreground hover:text-destructive transition-colors"
+        >
+          Lock
+        </button>
+      </div>
       <p className="text-sm text-muted-foreground mt-1">Manage the night</p>
 
       <GoldDivider />
@@ -210,7 +266,9 @@ export default function Admin() {
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Eye className="w-4 h-4 text-primary" strokeWidth={1.5} />
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Live Ratings ({ratings.length})</p>
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">
+              Live Ratings ({ratings.length}) · {new Set(ratings.map(r => r.user_name)).size} guests
+            </p>
           </div>
           {ratings.length > 0 && (
             <Button variant="ghost" size="sm" onClick={clearAllRatings} className="text-destructive hover:text-destructive text-xs h-7 px-2">
