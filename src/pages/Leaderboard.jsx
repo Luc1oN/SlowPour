@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { whiskeyApi } from '../api/whiskeys'
 import { ratingsApi } from '../api/ratings'
+import { supabase } from '../api/supabase'
 import PullToRefresh from '../components/shared/PullToRefresh'
 import { motion } from 'framer-motion'
 import GoldDivider from '../components/shared/GoldDivider'
@@ -9,6 +10,22 @@ import { Trophy, TrendingUp, TrendingDown, Flame, AlertTriangle } from 'lucide-r
 
 export default function Leaderboard() {
   const queryClient = useQueryClient()
+
+  // Real-time subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel('ratings-changes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'ratings',
+      }, () => {
+        queryClient.invalidateQueries({ queryKey: ['ratings'] })
+      })
+      .subscribe()
+
+    return () => supabase.removeChannel(channel)
+  }, [queryClient])
 
   const handleRefresh = async () => {
     await queryClient.invalidateQueries({ queryKey: ['whiskeys'] })
@@ -25,7 +42,6 @@ export default function Leaderboard() {
     queryKey: ['ratings'],
     queryFn: ratingsApi.list,
     initialData: [],
-    refetchInterval: 5000,
   })
 
   const stats = whiskeys
@@ -65,9 +81,15 @@ export default function Leaderboard() {
     <PullToRefresh onRefresh={handleRefresh}>
       <div className="px-5 py-8 max-w-lg mx-auto">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <div className="flex items-center gap-2 mb-1">
-            <Trophy className="w-5 h-5 text-primary" strokeWidth={1.5} />
-            <h1 className="font-heading text-2xl font-semibold text-foreground">Leaderboard</h1>
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-primary" strokeWidth={1.5} />
+              <h1 className="font-heading text-2xl font-semibold text-foreground">Leaderboard</h1>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Live</span>
+            </div>
           </div>
           <p className="text-sm text-muted-foreground">{ratings.length} total ratings</p>
         </motion.div>
