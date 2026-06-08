@@ -30,6 +30,9 @@ const formatSteps = [
 ]
 
 function PreShowScreen({ eventState }) {
+  const appUrl = 'https://luc1on.github.io/SlowPour/'
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(appUrl)}&bgcolor=f5efe6&color=3d2008&margin=10`
+
   return (
     <motion.div
       key="preshow"
@@ -70,7 +73,22 @@ function PreShowScreen({ eventState }) {
           </div>
         </motion.div>
 
-        <div className="h-px w-48 bg-gradient-to-r from-transparent via-primary/40 to-transparent mt-8" />
+        <div className="h-px w-48 bg-gradient-to-r from-transparent via-primary/40 to-transparent mt-8 mb-10" />
+
+        {/* QR Code */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="flex flex-col items-center gap-4"
+        >
+          <img
+            src={qrUrl}
+            alt="QR Code"
+            className="w-36 h-36 rounded-2xl shadow-md"
+          />
+          <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/60">Scan to join</p>
+        </motion.div>
       </div>
 
       {/* Right — format for the night */}
@@ -108,10 +126,16 @@ function PreShowScreen({ eventState }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2 }}
-          className="mt-10 pt-8 border-t border-border/30"
+          className="mt-10 pt-8 border-t border-border/30 flex items-center gap-6"
         >
-          <p className="text-sm text-muted-foreground/60 text-center">
-            Scan the QR code or visit the app to follow along and rate each dram
+          <img
+            src={qrUrl}
+            alt="QR Code"
+            className="w-16 h-16 rounded-xl shadow-sm flex-shrink-0"
+          />
+          <p className="text-sm text-muted-foreground/60">
+            Scan the QR code or visit<br />
+            <span className="text-primary/70 font-medium">luc1on.github.io/SlowPour</span>
           </p>
         </motion.div>
       </div>
