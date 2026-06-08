@@ -2,13 +2,15 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import GoldDivider from '../components/shared/GoldDivider'
 import { useEventState } from '../hooks/useEventState'
-import { MapPin, Calendar, User, Wine, Trash2 } from 'lucide-react'
+import { MapPin, Calendar, User, Trash2 } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader,
   AlertDialogTitle, AlertDialogTrigger,
 } from '../components/ui/alert-dialog'
+
+const LOGO_URL = 'https://media.base44.com/images/public/69c2768139029255606813e3/8048bcdcd_ChatGPTImageApr13202610_13_31AM-Edited.png'
 
 export default function EventInfo() {
   const { eventState } = useEventState()
@@ -28,11 +30,13 @@ export default function EventInfo() {
 
   return (
     <div className="px-5 py-8 max-w-lg mx-auto">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <div className="flex items-center gap-2 mb-1">
-          <Wine className="w-5 h-5 text-primary" strokeWidth={1.5} />
-          <h1 className="font-heading text-2xl font-semibold text-foreground">Event Info</h1>
-        </div>
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.6 }}
+        className="flex justify-center mb-8"
+      >
+        <img src={LOGO_URL} alt="The Slow Pour" className="w-64" />
       </motion.div>
 
       <GoldDivider />
