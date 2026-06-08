@@ -1,17 +1,22 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { whiskeyApi } from '../api/whiskeys'
 import { ratingsApi } from '../api/ratings'
 import { supabase } from '../api/supabase'
+import { useEventState } from '../hooks/useEventState'
 import PullToRefresh from '../components/shared/PullToRefresh'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import GoldDivider from '../components/shared/GoldDivider'
-import { Trophy, TrendingUp, TrendingDown, Flame, AlertTriangle } from 'lucide-react'
+import { Trophy, TrendingUp, TrendingDown, Flame, AlertTriangle, Share2 } from 'lucide-react'
+import { Button } from '../components/ui/button'
+
+const LOGO_URL = 'https://media.base44.com/images/public/69c2768139029255606813e3/8048bcdcd_ChatGPTImageApr13202610_13_31AM-Edited.png'
 
 export default function Leaderboard() {
   const queryClient = useQueryClient()
+  const { eventState } = useEventState()
+  const summaryRef = useRef(null)
 
-  // Real-time subscription
   useEffect(() => {
     const channel = supabase
       .channel('ratings-changes')
@@ -49,7 +54,6 @@ export default function Leaderboard() {
     .map(w => {
       const wRatings = ratings.filter(r => r.whiskey_id === w.id)
       const smashCount = wRatings.filter(r => r.smash_or_pass === 'smash').length
-      const passCount = wRatings.filter(r => r.smash_or_pass === 'pass').length
       const totalVotes = wRatings.length
       const avgScore = totalVotes > 0
         ? wRatings.reduce((sum, r) => sum + (r.score || 0), 0) / totalVotes
@@ -57,7 +61,7 @@ export default function Leaderboard() {
       const smashPct = totalVotes > 0 ? (smashCount / totalVotes) * 100 : 0
 
       return {
-        ...w, totalVotes, smashCount, passCount, avgScore, smashPct,
+        ...w, totalVotes, smashCount, avgScore, smashPct,
         controversy: totalVotes > 0 ? Math.min(smashPct, 100 - smashPct) : 0,
       }
     })
@@ -67,6 +71,8 @@ export default function Leaderboard() {
   const mostControversial = [...stats].sort((a, b) => b.controversy - a.controversy)[0]
   const highestScore = stats[0]
   const lowestScore = stats[stats.length - 1]
+  const guestNames = [...new Set(ratings.map(r => r.user_name))]
+  const isFinished = eventState?.votes_locked
 
   const funStats = [
     { icon: Flame, label: 'Most Smashed', value: topSmash?.name, color: 'text-primary' },
@@ -77,19 +83,139 @@ export default function Leaderboard() {
 
   const medalEmoji = ['🥇', '🥈', '🥉']
 
+  const handleShare = async () => {
+    const winner = stats[0]
+    const text = `🥃 The Slow Pour — ${eventState?.event_date || 'Whiskey Night'}\n\n` +
+      `🏆 Winner: ${winner?.name} (${winner?.avgScore.toFixed(1)}/10)\n\n` +
+      stats.map((w, i) => `${medalEmoji[i] || `#${i+1}`} ${w.name} — ${w.avgScore.toFixed(1)}/10 · ${Math.round(w.smashPct)}% Smash`).join('\n') +
+      `\n\n${guestNames.length} tasters · ${ratings.length} ratings`
+
+    if (navigator.share) {
+      await navigator.share({ title: 'The Slow Pour Results', text })
+    } else {
+      await navigator.clipboard.writeText(text)
+      alert('Results copied to clipboard!')
+    }
+  }
+
   return (
     <PullToRefresh onRefresh={handleRefresh}>
       <div className="px-5 py-8 max-w-lg mx-auto">
+
+        {/* End of Night Summary */}
+        <AnimatePresence>
+          {isFinished && stats.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              ref={summaryRef}
+              className="mb-8"
+            >
+              {/* Summary Card */}
+              <div className="rounded-2xl border border-primary/30 bg-gradient-to-b from-primary/10 to-primary/3 overflow-hidden">
+                {/* Header */}
+                <div className="px-5 pt-6 pb-4 text-center border-b border-primary/20">
+                  <img src={LOGO_URL} alt="The Slow Pour" className="w-28 mx-auto mb-4 opacity-90" />
+                  <p className="text-[10px] uppercase tracking-[0.3em] text-primary/70 mb-1">Final Results</p>
+                  <h2 className="font-heading text-2xl font-semibold text-foreground">Whiskey Night</h2>
+                  {eventState?.event_date && (
+                    <p className="text-sm text-muted-foreground mt-1">{eventState.event_date}</p>
+                  )}
+                  {eventState?.event_location && (
+                    <p className="text-xs text-muted-foreground">{eventState.event_location}</p>
+                  )}
+                </div>
+
+                {/* Winner */}
+                {stats[0] && (
+                  <div className="px-5 py-5 text-center border-b border-primary/20">
+                    <p className="text-[10px] uppercase tracking-widest text-primary/70 mb-2">🏆 Tonight's Winner</p>
+                    {stats[0].image_url && (
+                      <img
+                        src={stats[0].image_url}
+                        alt={stats[0].name}
+                        className="h-32 object-contain mx-auto mb-3"
+                      />
+                    )}
+                    <h3 className="font-heading text-2xl font-semibold text-foreground">{stats[0].name}</h3>
+                    {stats[0].distillery && (
+                      <p className="text-sm text-muted-foreground mt-0.5">{stats[0].distillery}</p>
+                    )}
+                    <div className="flex items-end justify-center gap-1 mt-3">
+                      <span className="font-heading text-5xl font-bold text-primary">{stats[0].avgScore.toFixed(1)}</span>
+                      <span className="text-lg text-muted-foreground mb-1">/10</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {Math.round(stats[0].smashPct)}% Smash · {stats[0].totalVotes} votes
+                    </p>
+                  </div>
+                )}
+
+                {/* All Results */}
+                <div className="px-5 py-4 border-b border-primary/20">
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">All Results</p>
+                  <div className="space-y-2">
+                    {stats.map((w, i) => (
+                      <div key={w.id} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">{medalEmoji[i] || `#${i+1}`}</span>
+                          <span className="text-sm font-medium text-foreground">{w.name}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs text-muted-foreground">{Math.round(w.smashPct)}% 🥃</span>
+                          <span className="font-heading font-semibold text-primary">{w.avgScore.toFixed(1)}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Guests */}
+                <div className="px-5 py-4 border-b border-primary/20">
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
+                    Tonight's Tasters · {guestNames.length}
+                  </p>
+                  <p className="text-sm text-foreground">{guestNames.join(' · ')}</p>
+                </div>
+
+                {/* Footer */}
+                <div className="px-5 py-3 text-center">
+                  <p className="text-[10px] text-muted-foreground/60 uppercase tracking-widest">
+                    Whiskey Night – The Slow Pour
+                  </p>
+                </div>
+              </div>
+
+              {/* Share Button */}
+              <Button
+                onClick={handleShare}
+                className="w-full mt-4 h-12 font-heading text-base"
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Share Results
+              </Button>
+
+              <GoldDivider />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
               <Trophy className="w-5 h-5 text-primary" strokeWidth={1.5} />
               <h1 className="font-heading text-2xl font-semibold text-foreground">Leaderboard</h1>
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Live</span>
-            </div>
+            {!isFinished && (
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Live</span>
+              </div>
+            )}
+            {isFinished && (
+              <span className="text-[10px] uppercase tracking-widest text-primary font-medium">Final</span>
+            )}
           </div>
           <p className="text-sm text-muted-foreground">{ratings.length} total ratings</p>
         </motion.div>
