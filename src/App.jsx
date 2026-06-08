@@ -6,6 +6,7 @@ import { supabase } from './api/supabase'
 import AppLayout from './pages/AppLayout'
 import Welcome from './pages/Welcome'
 import Lineup from './pages/Lineup'
+import Format from './pages/Format'
 import Leaderboard from './pages/Leaderboard'
 import MysteryDram from './pages/MysteryDram'
 import EventInfo from './pages/EventInfo'
@@ -30,6 +31,7 @@ function AppWithPing() {
         <Route element={<AppLayout />}>
           <Route path="/" element={<Welcome />} />
           <Route path="/lineup" element={<Lineup />} />
+          <Route path="/format" element={<Format />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/mystery" element={<MysteryDram />} />
           <Route path="/info" element={<EventInfo />} />
