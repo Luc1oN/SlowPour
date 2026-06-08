@@ -1,13 +1,14 @@
 import React from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { Home, List, Trophy, Lock, Info } from 'lucide-react'
+import { Home, List, Trophy, Lock, Info, AlignJustify } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 const navItems = [
   { path: '/', icon: Home, label: 'Home' },
-  { path: '/lineup', icon: List, label: 'Lineup' },
+  { path: '/lineup', icon: List, label: 'Whiskeys' },
   { path: '/leaderboard', icon: Trophy, label: 'Results' },
   { path: '/mystery', icon: Lock, label: 'Mystery' },
+  { path: '/format', icon: AlignJustify, label: 'Format' },
   { path: '/info', icon: Info, label: 'Info' },
 ]
 
@@ -68,12 +69,12 @@ export default function AppLayout() {
               <button
                 key={path}
                 onClick={(e) => handleNavClick(e, path)}
-                className={`flex flex-col items-center justify-center gap-0.5 min-w-[44px] min-h-[44px] px-4 py-2 rounded-lg transition-colors flex-1 ${
+                className={`flex flex-col items-center justify-center gap-0.5 min-w-[44px] min-h-[44px] px-2 py-2 rounded-lg transition-colors flex-1 ${
                   isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                <Icon className="w-6 h-6" strokeWidth={1.5} />
-                <span className="text-[11px] font-medium">{label}</span>
+                <Icon className="w-5 h-5" strokeWidth={1.5} />
+                <span className="text-[10px] font-medium">{label}</span>
               </button>
             )
           })}
