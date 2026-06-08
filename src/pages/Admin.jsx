@@ -191,22 +191,37 @@ export default function Admin() {
 
       <GoldDivider />
 
-      {/* Stage Control */}
-      <div className="bg-card border border-border/50 rounded-lg p-4 mb-6">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Current Stage</p>
-        <div className="flex items-center justify-between">
-          <Button variant="outline" size="icon" onClick={() => advanceStage(-1)} disabled={currentStage === 0}>
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <div className="text-center">
-            <p className="font-heading font-semibold text-foreground">{stageLabels[currentStage]}</p>
-            <p className="text-xs text-muted-foreground">Stage {currentStage + 1} of 8</p>
-          </div>
-          <Button variant="outline" size="icon" onClick={() => advanceStage(1)} disabled={currentStage === 7}>
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
+     {/* Stage Control */}
+<div className="bg-card border border-border/50 rounded-lg p-4 mb-6">
+  <p className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Current Stage</p>
+  <div className="flex items-center justify-between mb-4">
+    <Button variant="outline" size="icon" onClick={() => advanceStage(-1)} disabled={currentStage === 0}>
+      <ChevronLeft className="w-4 h-4" />
+    </Button>
+    <div className="text-center">
+      <p className="font-heading font-semibold text-foreground">{stageLabels[currentStage]}</p>
+      <p className="text-xs text-muted-foreground">Stage {currentStage + 1} of 9</p>
+    </div>
+    <Button variant="outline" size="icon" onClick={() => advanceStage(1)} disabled={currentStage === 8}>
+      <ChevronRight className="w-4 h-4" />
+    </Button>
+  </div>
+  <div className="grid grid-cols-3 gap-2">
+    {stageLabels.map((label, i) => (
+      <button
+        key={i}
+        onClick={() => updateEventState({ current_stage: i })}
+        className={`px-2 py-1.5 rounded-lg text-[10px] uppercase tracking-wide font-medium transition-all border ${
+          i === currentStage
+            ? 'bg-primary text-primary-foreground border-primary'
+            : 'bg-secondary text-muted-foreground border-border hover:border-primary/40 hover:text-foreground'
+        }`}
+      >
+        {label}
+      </button>
+    ))}
+  </div>
+</div>
 
       {/* Lock Votes */}
       <div className={`bg-card border rounded-lg p-4 mb-4 transition-colors ${eventState?.votes_locked ? 'border-destructive/50' : 'border-border/50'}`}>
