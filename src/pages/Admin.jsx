@@ -244,6 +244,22 @@ export default function Admin() {
         </div>
       </div>
 
+      {/* Begin the Night */}
+<div className={`bg-card border rounded-lg p-4 mb-4 transition-colors ${eventState?.night_started ? 'border-accent/50' : 'border-border/50'}`}>
+  <div className="flex items-center justify-between">
+    <div>
+      <p className="text-xs uppercase tracking-widest text-muted-foreground">Display Screen</p>
+      <p className="text-sm text-foreground mt-0.5">
+        {eventState?.night_started ? 'Night is live — display showing stages' : 'Showing welcome screen on display'}
+      </p>
+    </div>
+    <Switch
+      checked={eventState?.night_started || false}
+      onCheckedChange={(v) => updateEventState({ night_started: v })}
+    />
+  </div>
+</div>
+
       {/* Event Details */}
       <div className="bg-card border border-border/50 rounded-lg p-4 mb-6 space-y-3">
         <p className="text-xs uppercase tracking-widest text-muted-foreground">Event Details</p>
