@@ -2,13 +2,13 @@ import { supabase } from './supabase'
 
 export const whiskeyApi = {
   list: async (orderBy = 'round_number') => {
-    const { data, error } = await supabase
-      .from('whiskeys')
-      .select('*')
-      .order(orderBy)
-    if (error) throw error
-    return data
-  },
+  const { data, error } = await supabase
+    .from('whiskeys')
+    .select('*')
+    .order(orderBy)
+  if (error) throw error
+  return data
+},
 
   create: async (whiskey) => {
     const { data, error } = await supabase
