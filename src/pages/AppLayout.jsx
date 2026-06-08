@@ -28,17 +28,21 @@ export default function AppLayout() {
   const tabRoot = getTabRoot(location.pathname)
   tabHistories[tabRoot] = location.pathname
 
-  const handleNavClick = (e, path) => {
-    e.preventDefault()
-    const isActive = location.pathname === path ||
-      (path !== '/' && location.pathname.startsWith(path + '/'))
-    if (isActive) {
-      navigate(path, { replace: true })
-    } else {
-      const dest = tabHistories[path] || path
-      navigate(dest)
-    }
+const handleNavClick = (e, path) => {
+  e.preventDefault()
+  if (path === '/') {
+    navigate('/', { replace: true })
+    return
   }
+  const isActive = location.pathname === path ||
+    (path !== '/' && location.pathname.startsWith(path + '/'))
+  if (isActive) {
+    navigate(path, { replace: true })
+  } else {
+    const dest = tabHistories[path] || path
+    navigate(dest)
+  }
+}
 
   return (
     <div className="bg-background font-body flex flex-col" style={{ minHeight: '100dvh' }}>
