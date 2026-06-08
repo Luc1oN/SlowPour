@@ -154,56 +154,81 @@ export default function RateWhiskey() {
   }
 
   return (
-    <div className="px-5 py-6 max-w-lg mx-auto">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Back
-      </button>
-
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="font-heading text-2xl font-semibold text-foreground">
-          {existingRatingId ? 'Update Rating' : 'Rate'} {whiskey?.name || 'Whiskey'}
-        </h1>
-        <div className="flex items-center justify-between mt-1">
-          <p className="text-sm text-muted-foreground">Rating as {userName}</p>
-          {existingRatingId && (
-            <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full">Editing previous rating</span>
-          )}
-        </div>
-
-        <GoldDivider />
-
-        <div className="mb-6">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Smash or Pass?</p>
-          <SmashPassToggle value={smashOrPass} onChange={setSmashOrPass} />
-        </div>
-
-        <div className="mb-6">
-          <ScoreSlider value={score} onChange={setScore} />
-        </div>
-
-        <GoldDivider />
-
-        <div className="mb-6">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Flavour Notes</p>
-          <FlavourTags selected={flavourTags} onChange={setFlavourTags} />
-        </div>
-
-        <GoldDivider />
-
-        <div className="mb-8">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Your Thoughts</p>
-          <Textarea
-            placeholder="Write your thoughts…"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className="min-h-[100px]"
+    <div className="max-w-lg mx-auto">
+      {/* Bottle image hero */}
+      {whiskey?.image_url ? (
+        <div className="relative h-56 bg-secondary/50 flex items-center justify-center overflow-hidden">
+          <motion.img
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            src={whiskey.image_url}
+            alt={whiskey.name}
+            className="h-full object-contain py-4"
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/60" />
+          <button
+            onClick={() => navigate(-1)}
+            className="absolute top-4 left-4 flex items-center gap-1 text-sm text-foreground/70 hover:text-foreground transition-colors bg-background/40 backdrop-blur-sm px-3 py-1.5 rounded-full"
+          >
+            <ArrowLeft className="w-4 h-4" /> Back
+          </button>
         </div>
+      ) : (
+        <div className="px-5 pt-6">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </button>
+        </div>
+      )}
 
-        <Button onClick={handleSubmit} disabled={isPending} className="w-full h-12 font-heading text-base">
-          {isPending ? 'Saving…' : existingRatingId ? 'Update Rating' : 'Submit Rating'}
-        </Button>
-      </motion.div>
+      <div className="px-5 py-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <h1 className="font-heading text-2xl font-semibold text-foreground">
+            {existingRatingId ? 'Update Rating' : 'Rate'} {whiskey?.name || 'Whiskey'}
+          </h1>
+          <div className="flex items-center justify-between mt-1">
+            <p className="text-sm text-muted-foreground">Rating as {userName}</p>
+            {existingRatingId && (
+              <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full">Editing previous rating</span>
+            )}
+          </div>
+
+          <GoldDivider />
+
+          <div className="mb-6">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Smash or Pass?</p>
+            <SmashPassToggle value={smashOrPass} onChange={setSmashOrPass} />
+          </div>
+
+          <div className="mb-6">
+            <ScoreSlider value={score} onChange={setScore} />
+          </div>
+
+          <GoldDivider />
+
+          <div className="mb-6">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Flavour Notes</p>
+            <FlavourTags selected={flavourTags} onChange={setFlavourTags} />
+          </div>
+
+          <GoldDivider />
+
+          <div className="mb-8">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Your Thoughts</p>
+            <Textarea
+              placeholder="Write your thoughts…"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="min-h-[100px]"
+            />
+          </div>
+
+          <Button onClick={handleSubmit} disabled={isPending} className="w-full h-12 font-heading text-base">
+            {isPending ? 'Saving…' : existingRatingId ? 'Update Rating' : 'Submit Rating'}
+          </Button>
+        </motion.div>
+      </div>
     </div>
   )
 }
