@@ -54,10 +54,12 @@ export default function Leaderboard() {
 
   const funStats = [
     { icon: Flame, label: 'Most Smashed', value: topSmash?.name, color: 'text-primary' },
-    { icon: AlertTriangle, label: 'Most Controversial', value: mostControversial?.name, color: 'text-accent' },
+    { icon: AlertTriangle, label: 'Most Controversial', value: mostControversial?.name, color: 'text-primary' },
     { icon: TrendingUp, label: 'Highest Average', value: highestScore ? `${highestScore.name} (${highestScore.avgScore.toFixed(1)})` : '-', color: 'text-primary' },
     { icon: TrendingDown, label: 'Lowest Average', value: lowestScore ? `${lowestScore.name} (${lowestScore.avgScore.toFixed(1)})` : '-', color: 'text-muted-foreground' },
   ]
+
+  const medalEmoji = ['🥇', '🥈', '🥉']
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
@@ -83,30 +85,50 @@ export default function Leaderboard() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className="bg-card border border-border/50 rounded-lg p-4"
+                  className={`rounded-xl p-4 border ${
+                    i === 0
+                      ? 'bg-gradient-to-br from-primary/15 to-primary/5 border-primary/40 shadow-sm'
+                      : i === 1
+                      ? 'bg-card border-border/60'
+                      : 'bg-card border-border/40'
+                  }`}
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <span className={`font-heading text-2xl font-bold ${i === 0 ? 'text-primary' : 'text-muted-foreground'}`}>
-                        #{i + 1}
-                      </span>
+                      <span className="text-2xl">{medalEmoji[i] || `#${i + 1}`}</span>
                       <div>
-                        <p className="font-heading font-medium text-foreground">{w.name}</p>
-                        <p className="text-xs text-muted-foreground">{w.totalVotes} votes</p>
+                        <p className={`font-heading font-semibold ${i === 0 ? 'text-lg text-foreground' : 'text-base text-foreground'}`}>
+                          {w.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">{w.totalVotes} {w.totalVotes === 1 ? 'vote' : 'votes'}</p>
                       </div>
                     </div>
-                    <span className="font-heading text-2xl font-bold text-primary">{w.avgScore.toFixed(1)}</span>
+                    <div className="text-right">
+                      <span className={`font-heading font-bold text-primary ${i === 0 ? 'text-4xl' : 'text-2xl'}`}>
+                        {w.avgScore.toFixed(1)}
+                      </span>
+                      <p className="text-[10px] text-muted-foreground">/10</p>
+                    </div>
                   </div>
+
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-primary w-8">🥃 {Math.round(w.smashPct)}%</span>
-                    <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-primary rounded-full transition-all"
-                        style={{ width: `${w.smashPct}%` }}
+                    <span className="text-[10px] text-primary w-10">🥃 {Math.round(w.smashPct)}%</span>
+                    <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-primary rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${w.smashPct}%` }}
+                        transition={{ delay: i * 0.1 + 0.3, duration: 0.6 }}
                       />
                     </div>
-                    <span className="text-[10px] text-muted-foreground w-8">{Math.round(100 - w.smashPct)}%</span>
+                    <span className="text-[10px] text-muted-foreground w-10 text-right">{Math.round(100 - w.smashPct)}% ❌</span>
                   </div>
+
+                  {i === 0 && w.totalVotes > 0 && (
+                    <p className="text-[10px] uppercase tracking-widest text-primary/70 mt-3 text-center font-medium">
+                      ✦ Tonight's Favourite ✦
+                    </p>
+                  )}
                 </motion.div>
               ))}
             </div>
