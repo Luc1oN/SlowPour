@@ -21,12 +21,12 @@ const stageLabels = [
 ]
 
 const formatSteps = [
-  { emoji: '🥃', label: 'Round 1', desc: 'Taste and explore three whiskeys' },
-  { emoji: '⭐', label: 'Rate', desc: 'Score out of 10, Smash or Pass' },
-  { emoji: '☕', label: 'Break', desc: 'Halfway scores revealed' },
-  { emoji: '🔁', label: 'Round 2', desc: 'Revisit and rate again' },
-  { emoji: '🔒', label: 'Mystery', desc: 'The secret dram revealed' },
-  { emoji: '🏆', label: 'Results', desc: 'Tonight\'s winner announced' },
+  { emoji: '🥃', label: 'Round 1', desc: 'Taste three whiskeys back to back' },
+  { emoji: '☕', label: 'Break', desc: 'Halfway pause — round 1 scores revealed' },
+  { emoji: '🔁', label: 'Round 2', desc: 'Revisit all three whiskeys again' },
+  { emoji: '⭐', label: 'Rate', desc: 'Score out of 10 · Smash or Pass' },
+  { emoji: '🔒', label: 'Mystery Dram', desc: 'The secret dram is revealed' },
+  { emoji: '🏆', label: 'Final Results', desc: 'Tonight\'s winner announced' },
 ]
 
 function PreShowScreen({ eventState }) {
