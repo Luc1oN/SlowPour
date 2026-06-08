@@ -13,6 +13,7 @@ import EventInfo from './pages/EventInfo'
 import WhiskeyDetail from './pages/WhiskeyDetail'
 import RateWhiskey from './pages/RateWhiskey'
 import Admin from './pages/Admin'
+import Display from './pages/Display'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +29,10 @@ function AppWithPing() {
   return (
     <HashRouter>
       <Routes>
+        {/* Display mode — no nav, full screen */}
+        <Route path="/display" element={<Display />} />
+
+        {/* Main app */}
         <Route element={<AppLayout />}>
           <Route path="/" element={<Welcome />} />
           <Route path="/lineup" element={<Lineup />} />
