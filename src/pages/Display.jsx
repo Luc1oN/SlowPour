@@ -20,7 +20,6 @@ const stageLabels = [
   'Final Results',
 ]
 
-// Welcome / between screens
 function WelcomeScreen({ eventState }) {
   return (
     <motion.div
@@ -51,7 +50,6 @@ function WelcomeScreen({ eventState }) {
   )
 }
 
-// Whiskey spotlight screen
 function WhiskeyScreen({ whiskey, stage }) {
   const tastingNotes = [
     { label: 'Nose', value: whiskey.nose },
@@ -68,7 +66,6 @@ function WhiskeyScreen({ whiskey, stage }) {
       transition={{ duration: 0.7 }}
       className="flex h-full w-full"
     >
-      {/* Left — bottle image */}
       <div className="w-2/5 flex items-center justify-center p-16 border-r border-border/30">
         {whiskey.image_url ? (
           <motion.img
@@ -84,9 +81,7 @@ function WhiskeyScreen({ whiskey, stage }) {
         )}
       </div>
 
-      {/* Right — details */}
       <div className="w-3/5 flex flex-col justify-center px-16 py-12">
-        {/* Now tasting label */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -96,7 +91,6 @@ function WhiskeyScreen({ whiskey, stage }) {
           ✦ Now Tasting — {stageLabels[stage]}
         </motion.p>
 
-        {/* Name */}
         <motion.h1
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -106,7 +100,6 @@ function WhiskeyScreen({ whiskey, stage }) {
           {whiskey.name}
         </motion.h1>
 
-        {/* Distillery */}
         {whiskey.distillery && (
           <motion.p
             initial={{ opacity: 0 }}
@@ -114,12 +107,10 @@ function WhiskeyScreen({ whiskey, stage }) {
             transition={{ delay: 0.5 }}
             className="font-heading text-2xl text-muted-foreground mb-8"
           >
-            {whiskey.distillery}
-            {whiskey.age && ` · ${whiskey.age}`}
+            {whiskey.distillery}{whiskey.age && ` · ${whiskey.age}`}
           </motion.p>
         )}
 
-        {/* Details row */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -144,10 +135,8 @@ function WhiskeyScreen({ whiskey, stage }) {
           )}
         </motion.div>
 
-        {/* Divider */}
         <div className="h-px bg-gradient-to-r from-primary/30 to-transparent mb-8" />
 
-        {/* Tasting notes */}
         {tastingNotes.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -164,7 +153,6 @@ function WhiskeyScreen({ whiskey, stage }) {
           </motion.div>
         )}
 
-        {/* Description */}
         {whiskey.description && !tastingNotes.length && (
           <motion.p
             initial={{ opacity: 0 }}
@@ -180,7 +168,6 @@ function WhiskeyScreen({ whiskey, stage }) {
   )
 }
 
-// Break screen
 function BreakScreen({ ratings, whiskeys }) {
   const stats = whiskeys.map(w => {
     const wRatings = ratings.filter(r => r.whiskey_id === w.id)
@@ -216,7 +203,7 @@ function BreakScreen({ ratings, whiskeys }) {
                 transition={{ delay: i * 0.15 }}
                 className="text-center bg-card border border-border/50 rounded-2xl px-8 py-6 min-w-[180px]"
               >
-                <p className="text-3xl mb-2">{['🥇', '🥈', '🥉'][i] || `#${i+1}`}</p>
+                <p className="text-3xl mb-2">{['🥇', '🥈', '🥉'][i] || `#${i + 1}`}</p>
                 <p className="font-heading text-lg font-semibold text-foreground mb-1">{w.name}</p>
                 <p className="font-heading text-4xl font-bold text-primary">{w.avgScore.toFixed(1)}</p>
                 <p className="text-xs text-muted-foreground mt-1">{w.totalVotes} votes</p>
@@ -229,7 +216,6 @@ function BreakScreen({ ratings, whiskeys }) {
   )
 }
 
-// Mystery screen
 function MysteryScreen({ whiskey, revealed }) {
   if (!revealed) {
     return (
@@ -315,7 +301,6 @@ function MysteryScreen({ whiskey, revealed }) {
   )
 }
 
-// Final results screen
 function ResultsScreen({ whiskeys, ratings, eventState }) {
   const stats = whiskeys
     .filter(w => !w.is_mystery || ratings.some(r => r.whiskey_id === w.id))
@@ -343,7 +328,6 @@ function ResultsScreen({ whiskeys, ratings, eventState }) {
       exit={{ opacity: 0 }}
       className="flex h-full w-full"
     >
-      {/* Left — winner */}
       <div className="w-2/5 flex flex-col items-center justify-center p-12 border-r border-border/30 bg-gradient-to-b from-primary/8 to-transparent">
         <p className="text-xs uppercase tracking-[0.4em] text-primary/70 mb-4">🏆 Tonight's Winner</p>
         {winner?.image_url && (
@@ -367,7 +351,6 @@ function ResultsScreen({ whiskeys, ratings, eventState }) {
         <p className="text-sm text-muted-foreground mt-2">{Math.round(winner?.smashPct || 0)}% Smash</p>
       </div>
 
-      {/* Right — all results */}
       <div className="w-3/5 flex flex-col justify-center px-12 py-10">
         <p className="text-xs uppercase tracking-[0.4em] text-primary/70 mb-8">Final Results</p>
         <div className="space-y-4 mb-10">
@@ -381,7 +364,7 @@ function ResultsScreen({ whiskeys, ratings, eventState }) {
                 i === 0 ? 'border-primary/40 bg-primary/8' : 'border-border/40 bg-card/60'
               }`}
             >
-              <span className="text-3xl">{['🥇', '🥈', '🥉'][i] || `#${i+1}`}</span>
+              <span className="text-3xl">{['🥇', '🥈', '🥉'][i] || `#${i + 1}`}</span>
               <div className="flex-1 min-w-0">
                 <p className="font-heading text-xl font-semibold text-foreground truncate">{w.name}</p>
                 <p className="text-sm text-muted-foreground">{w.totalVotes} votes · {Math.round(w.smashPct)}% Smash</p>
@@ -390,7 +373,6 @@ function ResultsScreen({ whiskeys, ratings, eventState }) {
             </motion.div>
           ))}
         </div>
-
         <div className="h-px bg-border/40 mb-6" />
         <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
           Tonight's Tasters · {guestNames.length}
@@ -405,7 +387,6 @@ export default function Display() {
   const queryClient = useQueryClient()
   const { eventState } = useEventState()
 
-  // Real-time updates
   useEffect(() => {
     const channel = supabase
       .channel('display-changes')
@@ -423,21 +404,19 @@ export default function Display() {
     return () => supabase.removeChannel(channel)
   }, [queryClient])
 
-  const { data: whiskeys = [] } = useQuery({
+  const { data: whiskeys = [], isLoading: whiskeysLoading } = useQuery({
     queryKey: ['whiskeys'],
-    queryFn: whiskeyApi.list,
-    initialData: [],
+    queryFn: () => whiskeyApi.list('round_number'),
   })
 
   const { data: ratings = [] } = useQuery({
     queryKey: ['ratings'],
-    queryFn: ratingsApi.list,
+    queryFn: () => ratingsApi.list(),
     initialData: [],
   })
 
   const currentStage = eventState?.current_stage || 0
 
-  // Work out what to show
   const getWhiskeyForStage = (stage) => {
     const roundOneMap = [1, 2, 3]
     if (stage < 3) return whiskeys.find(w => !w.is_mystery && w.round_number === roundOneMap[stage])
@@ -452,25 +431,26 @@ export default function Display() {
   const isFinal = currentStage === 8
   const isWhiskeyStage = (currentStage < 3 || (currentStage >= 4 && currentStage <= 6))
 
+  if (whiskeysLoading) {
+    return (
+      <div className="fixed inset-0 bg-background flex items-center justify-center">
+        <img src={LOGO_URL} alt="The Slow Pour" className="w-48 opacity-40 animate-pulse" />
+      </div>
+    )
+  }
+
   return (
-    <div
-      className="fixed inset-0 bg-background overflow-hidden"
-      style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
-    >
-      {/* Subtle background texture */}
+    <div className="fixed inset-0 bg-background overflow-hidden">
       <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(circle_at_50%_50%,_hsl(34,60%,35%)_0%,_transparent_70%)]" />
 
-      {/* Stage indicator — top right */}
       <div className="absolute top-6 right-8 text-[10px] uppercase tracking-widest text-muted-foreground/50 z-10">
         Stage {currentStage + 1} of 9
       </div>
 
-      {/* Logo — top left */}
       <div className="absolute top-5 left-8 z-10">
         <img src={LOGO_URL} alt="The Slow Pour" className="h-10 opacity-40" />
       </div>
 
-      {/* Main content */}
       <div className="h-full w-full pt-4">
         <AnimatePresence mode="wait">
           {isFinal ? (
