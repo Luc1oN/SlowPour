@@ -82,7 +82,7 @@ export default function Welcome() {
           <Button
             onClick={handleEnter}
             disabled={!name.trim()}
-            className="w-full h-12 font-heading text-base tracking-wide"
+            className="w-full h-14 font-heading text-xl tracking-wide"
           >
             Enter Whiskey Night
           </Button>
