@@ -8,7 +8,7 @@ export function useEventState() {
     queryKey: ['eventState'],
     queryFn: eventStateApi.list,
     initialData: [],
-    refetchInterval: 5000,
+    refetchInterval: 10000,
   })
 
   const eventState = eventStates[0] || {}
@@ -21,7 +21,20 @@ export function useEventState() {
         return eventStateApi.create(data)
       }
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['eventState'] }),
+    onMutate: async (newData) => {
+      await queryClient.cancelQueries({ queryKey: ['eventState'] })
+      const previous = queryClient.getQueryData(['eventState'])
+      queryClient.setQueryData(['eventState'], (old = []) =>
+        old.map((s, i) => i === 0 ? { ...s, ...newData } : s)
+      )
+      return { previous }
+    },
+    onError: (_err, _data, ctx) => {
+      queryClient.setQueryData(['eventState'], ctx.previous)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['eventState'] })
+    },
   })
 
   return {
