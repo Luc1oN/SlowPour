@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { whiskeyApi } from '../api/whiskeys'
+import { useEventState } from '../hooks/useEventState'
 import { motion } from 'framer-motion'
 import { Button } from '../components/ui/button'
 import GoldDivider from '../components/shared/GoldDivider'
@@ -10,6 +11,7 @@ import { ArrowLeft, Droplets } from 'lucide-react'
 export default function WhiskeyDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { eventState } = useEventState()
 
   const { data: whiskeys = [], isLoading } = useQuery({
     queryKey: ['whiskeys'],
@@ -18,6 +20,11 @@ export default function WhiskeyDetail() {
   })
 
   const whiskey = whiskeys.find(w => w.id === id)
+  const currentStage = eventState?.current_stage || 0
+
+  // Round 2 stage for this whiskey — round_number 1 = stage 4, 2 = stage 5, 3 = stage 6
+  const round2Stage = whiskey ? whiskey.round_number + 3 : 99
+  const isRateable = currentStage >= round2Stage
 
   if (isLoading) {
     return (
@@ -108,10 +115,19 @@ export default function WhiskeyDetail() {
           </>
         )}
 
-        <div className="mt-8">
-          <Button onClick={() => navigate(`/rate/${whiskey.id}`)} className="w-full h-12 font-heading text-base">
-            Rate This Whiskey
-          </Button>
+        <div className="mt-8 mb-4">
+          {isRateable ? (
+            <Button
+              onClick={() => navigate(`/rate/${whiskey.id}`)}
+              className="w-full h-12 font-heading text-base"
+            >
+              Rate This Whiskey
+            </Button>
+          ) : (
+            <div className="w-full h-12 rounded-lg border border-border/40 bg-secondary/30 flex items-center justify-center">
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">Rating opens in Round 2</p>
+            </div>
+          )}
         </div>
       </motion.div>
     </div>
