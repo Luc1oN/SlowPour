@@ -502,7 +502,7 @@ export default function Display() {
   })
   const eventState = eventStates[0] || {}
 
-  const { data: whiskeys = [], error: whiskeyError } = useQuery({
+  const { data: whiskeys = [] } = useQuery({
     queryKey: ['display-whiskeys'],
     queryFn: async () => {
       const data = await whiskeyApi.list()
@@ -573,18 +573,9 @@ export default function Display() {
   }
 
   return (
-    <div className="h-screen w-screen bg-background font-body overflow-hidden relative">
+    <div className="h-screen w-screen bg-background font-body overflow-hidden">
       <AnimatePresence mode="wait">{screen}</AnimatePresence>
-      {/* Debug overlay — remove once working */}
-      <div className="fixed bottom-2 left-2 bg-black/80 text-green-400 text-[10px] font-mono p-2 rounded z-[9999] leading-relaxed">
-        <div>night_started: <span className="text-white">{String(eventState?.night_started)}</span></div>
-        <div>stage: <span className="text-white">{eventState?.current_stage ?? 'null'}</span></div>
-        <div>whiskeys: <span className="text-white">{whiskeys.length}</span></div>
-        <div>nonMystery: <span className="text-white">{whiskeys.filter(w=>!w.is_mystery).map(w=>`${w.name}(r${w.round_number})`).join(', ')}</span></div>
-        <div>stageType: <span className="text-white">{stageInfo?.type ?? 'null'}</span></div>
-        <div>slot: <span className="text-white">{stageInfo?.slot ?? 'null'}</span></div>
-        <div>wError: <span className="text-red-400">{whiskeyError?.message ?? 'none'}</span></div>
-      </div>
+
     </div>
   )
 }
