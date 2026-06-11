@@ -9,7 +9,7 @@ export function useEventState() {
   const { data: eventStates = [], isLoading } = useQuery({
     queryKey: ['eventState'],
     queryFn: eventStateApi.list,
-    refetchInterval: 30000, // gentle fallback only — realtime does the work
+    refetchInterval: 3000, // 3s fallback — covers cases where realtime subscription misses
   })
 
   // Realtime: the whole room moves the instant the host advances a stage.

@@ -5,7 +5,7 @@ import QRCode from 'qrcode'
 import { whiskeyApi } from '../api/whiskeys'
 import { ratingsApi } from '../api/ratings'
 import { supabase } from '../api/supabase'
-import { useEventState } from '../hooks/useEventState'
+import { eventStateApi } from '../api/eventState'
 import Logo from '../components/shared/Logo'
 import GlassFill from '../components/shared/GlassFill'
 import { RankBadge, Glencairn, PocketWatch, WaxSeal, Laurel } from '../components/icons/Icons'
@@ -492,20 +492,47 @@ function ResultsScreen({ whiskeys, ratings }) {
 
 export default function Display() {
   const queryClient = useQueryClient()
-  const { eventState } = useEventState()
   const qr = useQrCode()
 
-  const { data: whiskeys = [] } = useQuery({ queryKey: ['whiskeys'], queryFn: whiskeyApi.list })
-  const { data: ratings = [] } = useQuery({ queryKey: ['ratings'], queryFn: ratingsApi.list })
+  // Display uses its own isolated queries — separate from the guest app's cache
+  const { data: eventStates = [] } = useQuery({
+    queryKey: ['display-eventState'],
+    queryFn: eventStateApi.list,
+    refetchInterval: 2000, // poll every 2s as rock-solid fallback
+  })
+  const eventState = eventStates[0] || {}
+
+  const { data: whiskeys = [] } = useQuery({
+    queryKey: ['display-whiskeys'],
+    queryFn: whiskeyApi.list,
+    refetchInterval: 10000,
+  })
+  const { data: ratings = [] } = useQuery({
+    queryKey: ['display-ratings'],
+    queryFn: ratingsApi.list,
+    refetchInterval: 5000,
+  })
 
   useEffect(() => {
-    const channel = supabase
-      .channel('display-ratings')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'ratings' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['ratings'] })
+    // Unique channel names to avoid collision with guest app subscriptions
+    const stateChannel = supabase
+      .channel('display-event-state-v2')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'event_state' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['display-eventState'] })
       })
       .subscribe()
-    return () => supabase.removeChannel(channel)
+
+    const ratingsChannel = supabase
+      .channel('display-ratings-v2')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'ratings' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['display-ratings'] })
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(stateChannel)
+      supabase.removeChannel(ratingsChannel)
+    }
   }, [queryClient])
 
   const stage = eventState?.current_stage || 0
