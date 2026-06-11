@@ -43,14 +43,14 @@ function PreShowScreen({ eventState, qr }) {
       exit={{ opacity: 0 }}
       className="flex h-full w-full"
     >
-      <div className="w-1/2 flex flex-col items-center justify-center p-16 border-r border-border/30 candle-glow">
+      <div className="w-1/2 flex flex-col items-center justify-center py-8 px-12 border-r border-border/30 candle-glow overflow-hidden">
         <motion.div
           initial={{ scale: 0.85, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.8 }}
-          className="mb-8"
+          className="mb-5"
         >
-          <Logo className="w-[26rem]" />
+          <Logo className="w-[22rem]" />
         </motion.div>
 
         <motion.div
@@ -68,7 +68,7 @@ function PreShowScreen({ eventState, qr }) {
           <p className="text-sm text-muted-foreground/70 uppercase tracking-[0.3em] pt-3">Hosted by Shane</p>
         </motion.div>
 
-        <div className="h-px w-48 bg-gradient-to-r from-transparent via-primary/40 to-transparent mt-10 mb-10" />
+        <div className="h-px w-48 bg-gradient-to-r from-transparent via-primary/40 to-transparent mt-6 mb-6" />
 
         {qr && (
           <motion.div
