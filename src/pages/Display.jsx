@@ -502,15 +502,21 @@ export default function Display() {
   })
   const eventState = eventStates[0] || {}
 
-  const { data: whiskeys = [] } = useQuery({
+  const { data: whiskeys = [], error: whiskeyError } = useQuery({
     queryKey: ['display-whiskeys'],
-    queryFn: whiskeyApi.list,
-    refetchInterval: 10000,
+    queryFn: async () => {
+      const data = await whiskeyApi.list()
+      return data
+    },
+    refetchInterval: 5000,
+    retry: 5,
+    retryDelay: 1000,
   })
   const { data: ratings = [] } = useQuery({
     queryKey: ['display-ratings'],
     queryFn: ratingsApi.list,
     refetchInterval: 5000,
+    retry: 3,
   })
 
   useEffect(() => {
@@ -577,6 +583,7 @@ export default function Display() {
         <div>nonMystery: <span className="text-white">{whiskeys.filter(w=>!w.is_mystery).map(w=>`${w.name}(r${w.round_number})`).join(', ')}</span></div>
         <div>stageType: <span className="text-white">{stageInfo?.type ?? 'null'}</span></div>
         <div>slot: <span className="text-white">{stageInfo?.slot ?? 'null'}</span></div>
+        <div>wError: <span className="text-red-400">{whiskeyError?.message ?? 'none'}</span></div>
       </div>
     </div>
   )
