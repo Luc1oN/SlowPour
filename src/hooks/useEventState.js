@@ -1,0 +1,57 @@
+import { useEffect } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { eventStateApi } from '../api/eventState'
+import { supabase } from '../api/supabase'
+
+export function useEventState() {
+  const queryClient = useQueryClient()
+
+  const { data: eventStates = [], isLoading } = useQuery({
+    queryKey: ['eventState'],
+    queryFn: eventStateApi.list,
+    refetchInterval: 30000, // gentle fallback only — realtime does the work
+  })
+
+  // Realtime: the whole room moves the instant the host advances a stage.
+  useEffect(() => {
+    const channel = supabase
+      .channel('event-state-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'event_state' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['eventState'] })
+      })
+      .subscribe()
+    return () => supabase.removeChannel(channel)
+  }, [queryClient])
+
+  const eventState = eventStates[0] || {}
+
+  const updateMutation = useMutation({
+    mutationFn: (data) => {
+      if (eventState?.id) {
+        return eventStateApi.update(eventState.id, data)
+      } else {
+        return eventStateApi.create(data)
+      }
+    },
+    onMutate: async (newData) => {
+      await queryClient.cancelQueries({ queryKey: ['eventState'] })
+      const previous = queryClient.getQueryData(['eventState'])
+      queryClient.setQueryData(['eventState'], (old = []) =>
+        old.length ? old.map((s, i) => (i === 0 ? { ...s, ...newData } : s)) : old
+      )
+      return { previous }
+    },
+    onError: (_err, _data, ctx) => {
+      queryClient.setQueryData(['eventState'], ctx.previous)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['eventState'] })
+    },
+  })
+
+  return {
+    eventState,
+    eventStateLoading: isLoading,
+    updateEventState: updateMutation.mutate,
+  }
+}
