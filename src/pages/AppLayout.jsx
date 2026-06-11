@@ -1,6 +1,5 @@
 import React from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
 import { Glencairn, Laurel } from '../components/icons/Icons'
 
 function HomeIcon({ className }) {
@@ -10,6 +9,7 @@ function HomeIcon({ className }) {
     </svg>
   )
 }
+
 function TonightIcon({ className }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -19,10 +19,10 @@ function TonightIcon({ className }) {
 }
 
 const navItems = [
-  { path: '/', icon: HomeIcon, label: 'Home' },
-  { path: '/lineup', icon: Glencairn, label: 'Whiskeys' },
-  { path: '/tonight', icon: TonightIcon, label: 'Tonight' },
-  { path: '/leaderboard', icon: Laurel, label: 'Results' },
+  { path: '/',           icon: HomeIcon,    label: 'Home' },
+  { path: '/lineup',     icon: Glencairn,   label: 'Whiskeys' },
+  { path: '/tonight',    icon: TonightIcon, label: 'Tonight' },
+  { path: '/leaderboard',icon: Laurel,      label: 'Results' },
 ]
 
 const subRoutes = { '/whiskey': '/lineup', '/rate': '/lineup', '/mystery': '/lineup' }
@@ -56,11 +56,9 @@ export default function AppLayout() {
   const isAdmin = location.pathname.startsWith('/admin')
 
   return (
-    <div
-      className="bg-background font-body flex flex-col"
-      style={{ height: '100dvh' }}
-    >
-      {/* Scrollable page content */}
+    <div className="bg-background font-body flex flex-col" style={{ height: '100dvh' }}>
+
+      {/* Page content — scrollable, no animation wrapper causing flash */}
       <main
         className="flex-1 overflow-y-auto"
         style={{
@@ -70,16 +68,7 @@ export default function AppLayout() {
           overscrollBehavior: 'contain',
         }}
       >
-        <AnimatePresence mode="sync" initial={false}>
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-          >
-            <Outlet />
-          </motion.div>
-        </AnimatePresence>
+        <Outlet />
       </main>
 
       {/* Bottom nav */}
