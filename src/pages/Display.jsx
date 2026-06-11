@@ -516,7 +516,15 @@ export default function Display() {
   if (!nightStarted) {
     screen = <PreShowScreen eventState={eventState} qr={qr} />
   } else if (stageInfo?.type === 'tasting') {
-    const whiskey = whiskeys.find(w => !w.is_mystery && w.round_number === stageInfo.slot)
+    // Primary lookup: match round_number field to slot number
+    // Fallback: use sorted position (handles null/wrong round_number in DB)
+    const nonMystery = whiskeys
+      .filter(w => !w.is_mystery)
+      .sort((a, b) => (a.round_number || 99) - (b.round_number || 99))
+    const whiskey =
+      nonMystery.find(w => w.round_number === stageInfo.slot) ||
+      nonMystery[stageInfo.slot - 1] ||
+      null
     screen = whiskey
       ? <WhiskeyScreen whiskey={whiskey} stage={stage} />
       : <WelcomeScreen eventState={eventState} />
