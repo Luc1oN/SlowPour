@@ -53,7 +53,7 @@ export default function Tonight() {
         transition={{ duration: 0.5 }}
         className="flex justify-center mb-2"
       >
-        <Logo className="w-56" style={{ mixBlendMode: "screen" }} />
+        <Logo className="w-56" />
       </motion.div>
 
       <GoldDivider />

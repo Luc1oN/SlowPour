@@ -112,7 +112,7 @@ export default function Leaderboard() {
             >
               {/* Header */}
               <div className="px-5 pt-6 pb-4 text-center border-b border-primary/20">
-                <div className="flex justify-center mb-3"><Logo className="w-44" style={{ mixBlendMode: "screen" }} /></div>
+                <div className="flex justify-center mb-3"><Logo className="w-44" /></div>
                 <p className="text-[11px] uppercase tracking-[0.3em] text-primary/70 mb-1">Final Results</p>
                 {eventState?.event_date && <p className="text-sm text-muted-foreground">{eventState.event_date}</p>}
                 {eventState?.event_location && <p className="text-xs text-muted-foreground">{eventState.event_location}</p>}

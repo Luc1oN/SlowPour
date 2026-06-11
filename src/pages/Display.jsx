@@ -50,7 +50,7 @@ function PreShowScreen({ eventState, qr }) {
           transition={{ delay: 0.3, duration: 0.8 }}
           className="mb-8"
         >
-          <Logo className="w-[26rem]" style={{ mixBlendMode: "screen" }} />
+          <Logo className="w-[26rem]" />
         </motion.div>
 
         <motion.div
@@ -142,7 +142,7 @@ function WelcomeScreen({ eventState }) {
         transition={{ delay: 0.3, duration: 0.8 }}
         className="mb-10"
       >
-        <Logo className="w-[30rem]" style={{ mixBlendMode: "screen" }} />
+        <Logo className="w-[30rem]" />
       </motion.div>
       {eventState?.event_date && (
         <p className="font-heading text-3xl text-foreground/80 mb-2">{eventState.event_date}</p>
