@@ -114,7 +114,7 @@ export default function Lineup() {
                   {whiskey.distillery} {whiskey.age && `· ${whiskey.age}`}
                 </p>
                 {whiskey.is_centrepiece && (
-                  <span className="inline-block mt-1 text-[11px] uppercase tracking-widest text-primary font-semibold">Centrepiece</span>
+                  <span className="block mt-1 text-[11px] uppercase tracking-widest text-primary font-semibold">Centrepiece</span>
                 )}
                 {rateable ? (
                   <motion.span

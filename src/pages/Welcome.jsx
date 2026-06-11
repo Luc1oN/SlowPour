@@ -35,7 +35,7 @@ export default function Welcome() {
           transition={{ delay: 0.2, duration: 0.7 }}
           className="mb-6 flex justify-center"
         >
-          <Logo className="w-72" />
+          <Logo className="w-72" style={{ mixBlendMode: "screen" }} />
         </motion.div>
 
         <motion.div

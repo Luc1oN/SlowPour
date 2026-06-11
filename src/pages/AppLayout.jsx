@@ -26,7 +26,6 @@ const navItems = [
 ]
 
 const subRoutes = { '/whiskey': '/lineup', '/rate': '/lineup', '/mystery': '/lineup' }
-
 const tabHistories = {}
 
 function getTabRoot(path) {
@@ -45,26 +44,31 @@ export default function AppLayout() {
   tabHistories[tabRoot] = location.pathname
 
   const handleNavClick = (path) => {
-    if (path === '/') {
-      navigate('/', { replace: true })
-      return
-    }
+    if (path === '/') { navigate('/', { replace: true }); return }
     const isActive = tabRoot === path
     if (isActive && location.pathname !== path) {
       navigate(path, { replace: true })
     } else if (!isActive) {
-      const dest = tabHistories[path] || path
-      navigate(dest)
+      navigate(tabHistories[path] || path)
     }
   }
 
   const isAdmin = location.pathname.startsWith('/admin')
 
   return (
-    <div className="bg-background font-body flex flex-col" style={{ minHeight: '100dvh' }}>
+    <div
+      className="bg-background font-body flex flex-col"
+      style={{ height: '100dvh' }}
+    >
+      {/* Scrollable page content */}
       <main
-        className="flex-1 overflow-hidden"
-        style={{ paddingBottom: isAdmin ? 'env(safe-area-inset-bottom)' : 'calc(5rem + env(safe-area-inset-bottom))' }}
+        className="flex-1 overflow-y-auto"
+        style={{
+          paddingBottom: isAdmin
+            ? 'env(safe-area-inset-bottom)'
+            : 'calc(5rem + env(safe-area-inset-bottom))',
+          overscrollBehavior: 'contain',
+        }}
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
@@ -73,19 +77,18 @@ export default function AppLayout() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -16 }}
             transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="h-full overflow-y-auto"
-            style={{ overscrollBehaviorY: 'contain' }}
           >
             <Outlet />
           </motion.div>
         </AnimatePresence>
       </main>
 
+      {/* Bottom nav */}
       {!isAdmin && (
         <nav
-          className="fixed bottom-0 left-0 right-0 bg-card/90 backdrop-blur-md border-t border-border z-50"
+          className="flex-shrink-0 bg-card/90 backdrop-blur-md border-t border-border z-50"
           style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-          aria-label="Main"
+          aria-label="Main navigation"
         >
           <div className="max-w-2xl mx-auto flex items-center justify-around">
             {navItems.map(({ path, icon: Icon, label }) => {
@@ -95,7 +98,7 @@ export default function AppLayout() {
                   key={path}
                   onClick={() => handleNavClick(path)}
                   aria-current={isActive ? 'page' : undefined}
-                  className={`flex flex-col items-center justify-center gap-0.5 min-w-[44px] min-h-[44px] px-3 py-2 rounded-lg transition-colors flex-1 ${
+                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[44px] px-3 py-2 rounded-lg transition-colors flex-1 ${
                     isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
