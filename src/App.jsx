@@ -29,13 +29,39 @@ const queryClient = new QueryClient({
   }),
 })
 
-function RootGate() {
+// Everything a guest can reach is gated here. While the host hasn't
+// flipped "Night Live", every path under this gate — whatever it is —
+// shows only the Landing preview, with no nav and no other pages
+// reachable. Once Night Live is on, the full app (with bottom nav)
+// takes over for every guest route.
+function GuestGate() {
   const { eventState, eventStateLoading } = useEventState()
 
   // Avoid a flash of the wrong screen while event state loads
   if (eventStateLoading) return null
 
-  return eventState?.night_started ? <Welcome /> : <Landing eventState={eventState} />
+  if (!eventState?.night_started) {
+    return <Landing eventState={eventState} />
+  }
+
+  return (
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<Welcome />} />
+        <Route path="/lineup" element={<Lineup />} />
+        <Route path="/tonight" element={<Tonight />} />
+        {/* legacy routes from v1 keep working */}
+        <Route path="/format" element={<Navigate to="/tonight" replace />} />
+        <Route path="/info" element={<Navigate to="/tonight" replace />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/mystery" element={<MysteryDram />} />
+        <Route path="/whiskey/:id" element={<WhiskeyDetail />} />
+        <Route path="/rate/:id" element={<RateWhiskey />} />
+        {/* Any unknown path just falls back to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
+  )
 }
 
 function AppWithPing() {
@@ -47,23 +73,12 @@ function AppWithPing() {
   return (
     <HashRouter>
       <Routes>
-        {/* Display mode — no nav, full screen */}
+        {/* Host-only routes — always reachable, regardless of Night Live */}
         <Route path="/display" element={<Display />} />
+        <Route path="/admin" element={<Admin />} />
 
-        {/* Main app */}
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<RootGate />} />
-          <Route path="/lineup" element={<Lineup />} />
-          <Route path="/tonight" element={<Tonight />} />
-          {/* legacy routes from v1 keep working */}
-          <Route path="/format" element={<Navigate to="/tonight" replace />} />
-          <Route path="/info" element={<Navigate to="/tonight" replace />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/mystery" element={<MysteryDram />} />
-          <Route path="/whiskey/:id" element={<WhiskeyDetail />} />
-          <Route path="/rate/:id" element={<RateWhiskey />} />
-          <Route path="/admin" element={<Admin />} />
-        </Route>
+        {/* Everything else is gated by Night Live */}
+        <Route path="/*" element={<GuestGate />} />
       </Routes>
     </HashRouter>
   )
