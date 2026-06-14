@@ -7,6 +7,8 @@ import ErrorBoundary from './components/ErrorBoundary'
 import { supabase } from './api/supabase'
 import AppLayout from './pages/AppLayout'
 import Welcome from './pages/Welcome'
+import Landing from './pages/Landing'
+import { useEventState } from './hooks/useEventState'
 import Lineup from './pages/Lineup'
 import Tonight from './pages/Tonight'
 import Leaderboard from './pages/Leaderboard'
@@ -27,6 +29,15 @@ const queryClient = new QueryClient({
   }),
 })
 
+function RootGate() {
+  const { eventState, eventStateLoading } = useEventState()
+
+  // Avoid a flash of the wrong screen while event state loads
+  if (eventStateLoading) return null
+
+  return eventState?.night_started ? <Welcome /> : <Landing eventState={eventState} />
+}
+
 function AppWithPing() {
   useEffect(() => {
     // warm the free-tier database on load
@@ -41,7 +52,7 @@ function AppWithPing() {
 
         {/* Main app */}
         <Route element={<AppLayout />}>
-          <Route path="/" element={<Welcome />} />
+          <Route path="/" element={<RootGate />} />
           <Route path="/lineup" element={<Lineup />} />
           <Route path="/tonight" element={<Tonight />} />
           {/* legacy routes from v1 keep working */}

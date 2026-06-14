@@ -28,3 +28,14 @@ export function rateUnlockStage(roundNumber) {
 export function isRateable(whiskey, currentStage) {
   return currentStage >= rateUnlockStage(whiskey.round_number)
 }
+
+// Simple 5-step overview used on the Landing page and the Display
+// pre-show screen. Distinct from the detailed STAGES list (which is
+// stage-by-stage); this is the guest-facing "what to expect" summary.
+export const FORMAT_OVERVIEW = [
+  { icon: 'glencairn', label: 'Round 1', desc: 'Taste three whiskeys, take your notes' },
+  { icon: 'watch',     label: 'Break',   desc: 'Pause and reflect' },
+  { icon: 'repeat',    label: 'Round 2', desc: 'Revisit all three and rate as you go' },
+  { icon: 'seal',      label: 'Mystery Dram', desc: 'The seal is broken' },
+  { icon: 'laurel',    label: 'Final Results', desc: "Tonight's winner announced" },
+]

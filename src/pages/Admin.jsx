@@ -374,13 +374,15 @@ function AdminPanel() {
         </div>
       </div>
 
-      {/* Display Screen */}
+      {/* Night Live toggle — gates both the guest landing page and the display */}
       <div className={`bg-card border rounded-xl p-4 mb-4 transition-colors ${eventState?.night_started ? 'border-accent/50' : 'border-border/60'}`}>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[11px] uppercase tracking-widest text-muted-foreground">Display Screen</p>
+            <p className="text-[11px] uppercase tracking-widest text-muted-foreground">Night Live</p>
             <p className="text-sm text-foreground mt-0.5">
-              {eventState?.night_started ? 'Night is live — display showing stages' : 'Showing welcome screen on display'}
+              {eventState?.night_started
+                ? 'Live — guests see "Enter Whiskey Night"'
+                : 'Not started — guests see the format preview'}
             </p>
           </div>
           <Switch

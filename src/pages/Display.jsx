@@ -9,7 +9,7 @@ import { eventStateApi } from '../api/eventState'
 import Logo from '../components/shared/Logo'
 import GlassFill from '../components/shared/GlassFill'
 import { RankBadge, Glencairn, PocketWatch, WaxSeal, Laurel } from '../components/icons/Icons'
-import { STAGES } from '../lib/stages'
+import { STAGES, FORMAT_OVERVIEW } from '../lib/stages'
 
 const APP_URL = 'https://luc1on.github.io/SlowPour/'
 
@@ -26,13 +26,24 @@ function useQrCode() {
   return qr
 }
 
-const formatSteps = [
-  { Icon: Glencairn, label: 'Round 1', desc: 'Taste three whiskeys, take your notes' },
-  { Icon: PocketWatch, label: 'Break', desc: 'Pause and reflect' },
-  { Icon: Glencairn, label: 'Round 2', desc: 'Revisit all three and rate as you go' },
-  { Icon: WaxSeal, label: 'Mystery Dram', desc: 'The seal is broken' },
-  { Icon: Laurel, label: 'Final Results', desc: "Tonight's winner announced" },
-]
+function RepeatIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 2l4 4-4 4" /><path d="M3 11v-1a4 4 0 014-4h14" />
+      <path d="M7 22l-4-4 4-4" /><path d="M21 13v1a4 4 0 01-4 4H3" />
+    </svg>
+  )
+}
+
+const stepIcon = {
+  glencairn: Glencairn,
+  watch: PocketWatch,
+  repeat: RepeatIcon,
+  seal: WaxSeal,
+  laurel: Laurel,
+}
+
+const formatSteps = FORMAT_OVERVIEW.map(s => ({ ...s, Icon: stepIcon[s.icon] }))
 
 function PreShowScreen({ eventState, qr }) {
   return (
