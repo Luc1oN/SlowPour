@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { QueryClient, QueryClientProvider, MutationCache } from '@tanstack/react-query'
 import { MotionConfig } from 'framer-motion'
 import { ToastProvider, notify } from './components/ui/toast'
@@ -29,11 +29,10 @@ const queryClient = new QueryClient({
   }),
 })
 
-// Everything a guest can reach is gated here. While the host hasn't
-// flipped "Night Live", every path under this gate — whatever it is —
-// shows only the Landing preview, with no nav and no other pages
-// reachable. Once Night Live is on, the full app (with bottom nav)
-// takes over for every guest route.
+// Layout route for every guest path. While "Night Live" is off, every
+// guest route renders only the Landing preview (no nav, nothing else
+// reachable). Once it's on, the real layout (with bottom nav) and the
+// matched child route render normally via <Outlet/>.
 function GuestGate() {
   const { eventState, eventStateLoading } = useEventState()
 
@@ -44,24 +43,7 @@ function GuestGate() {
     return <Landing eventState={eventState} />
   }
 
-  return (
-    <Routes>
-      <Route element={<AppLayout />}>
-        <Route path="/" element={<Welcome />} />
-        <Route path="/lineup" element={<Lineup />} />
-        <Route path="/tonight" element={<Tonight />} />
-        {/* legacy routes from v1 keep working */}
-        <Route path="/format" element={<Navigate to="/tonight" replace />} />
-        <Route path="/info" element={<Navigate to="/tonight" replace />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/mystery" element={<MysteryDram />} />
-        <Route path="/whiskey/:id" element={<WhiskeyDetail />} />
-        <Route path="/rate/:id" element={<RateWhiskey />} />
-        {/* Any unknown path just falls back to home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Route>
-    </Routes>
-  )
+  return <Outlet />
 }
 
 function AppWithPing() {
@@ -78,7 +60,22 @@ function AppWithPing() {
         <Route path="/admin" element={<Admin />} />
 
         {/* Everything else is gated by Night Live */}
-        <Route path="/*" element={<GuestGate />} />
+        <Route element={<GuestGate />}>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Welcome />} />
+            <Route path="/lineup" element={<Lineup />} />
+            <Route path="/tonight" element={<Tonight />} />
+            {/* legacy routes from v1 keep working */}
+            <Route path="/format" element={<Navigate to="/tonight" replace />} />
+            <Route path="/info" element={<Navigate to="/tonight" replace />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/mystery" element={<MysteryDram />} />
+            <Route path="/whiskey/:id" element={<WhiskeyDetail />} />
+            <Route path="/rate/:id" element={<RateWhiskey />} />
+            {/* Any unknown path just falls back to home */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Route>
       </Routes>
     </HashRouter>
   )
