@@ -1,10 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useId } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { eventStateApi } from '../api/eventState'
 import { supabase } from '../api/supabase'
 
 export function useEventState() {
   const queryClient = useQueryClient()
+  const instanceId = useId()
 
   const { data: eventStates = [], isLoading } = useQuery({
     queryKey: ['eventState'],
@@ -14,14 +15,17 @@ export function useEventState() {
 
   // Realtime: the whole room moves the instant the host advances a stage.
   useEffect(() => {
+    // Unique per hook instance — multiple components use this hook
+    // simultaneously (e.g. the Night Live gate and the page it renders),
+    // so a shared channel name would collide.
     const channel = supabase
-      .channel('event-state-changes')
+      .channel(`event-state-changes-${instanceId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'event_state' }, () => {
         queryClient.invalidateQueries({ queryKey: ['eventState'] })
       })
       .subscribe()
     return () => supabase.removeChannel(channel)
-  }, [queryClient])
+  }, [queryClient, instanceId])
 
   const eventState = eventStates[0] || {}
 
