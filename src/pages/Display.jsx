@@ -11,7 +11,7 @@ import GlassFill from '../components/shared/GlassFill'
 import { RankBadge, Glencairn, PocketWatch, WaxSeal, Laurel } from '../components/icons/Icons'
 import { STAGES, FORMAT_OVERVIEW } from '../lib/stages'
 
-const APP_URL = 'https://luc1on.github.io/SlowPour/'
+const APP_URL = 'https://slowpour.ie/'
 
 // QR generated locally — no third-party service to fail mid-event.
 function useQrCode() {
@@ -131,7 +131,7 @@ function PreShowScreen({ eventState, qr }) {
           className="mt-12 pt-8 border-t border-border/30 text-sm text-muted-foreground/60"
         >
           Scan the QR code or visit{' '}
-          <span className="text-primary/70 font-medium">luc1on.github.io/SlowPour</span>
+          <span className="text-primary/70 font-medium">slowpour.ie</span>
         </motion.p>
       </div>
     </motion.div>
