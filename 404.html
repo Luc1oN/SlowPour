@@ -4,8 +4,8 @@
   <script>
     var l = window.location;
     l.replace(
-      l.protocol + '//' + l.host + '/SlowPour/' +
-      '?p=/' + l.pathname.slice(1).split('/').slice(1).join('/') +
+      l.protocol + '//' + l.host + '/' +
+      '?p=/' + l.pathname.slice(1) +
       (l.search ? '&q=' + l.search.slice(1) : '') +
       l.hash
     );
