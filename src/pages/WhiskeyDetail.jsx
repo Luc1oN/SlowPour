@@ -16,7 +16,7 @@ export default function WhiskeyDetail() {
 
   const { data: whiskeys = [], isLoading } = useQuery({
     queryKey: ['whiskeys'],
-    queryFn: whiskeyApi.list,
+    queryFn: () => whiskeyApi.list(),
   })
 
   const whiskey = whiskeys.find(w => w.id === id)

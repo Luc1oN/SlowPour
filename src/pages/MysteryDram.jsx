@@ -12,7 +12,7 @@ import { ArrowLeft } from 'lucide-react'
 export default function MysteryDram() {
   const navigate = useNavigate()
   const { eventState } = useEventState()
-  const { data: whiskeys = [] } = useQuery({ queryKey: ['whiskeys'], queryFn: whiskeyApi.list })
+  const { data: whiskeys = [] } = useQuery({ queryKey: ['whiskeys'], queryFn: () => whiskeyApi.list() })
   const mystery = whiskeys.find(w => w.is_mystery)
   const revealed = eventState.mystery_revealed
 

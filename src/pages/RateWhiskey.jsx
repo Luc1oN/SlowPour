@@ -15,7 +15,7 @@ import { useUserName } from '../hooks/useUserName'
 import { getDeviceId } from '../hooks/useDeviceId'
 import { useEventState } from '../hooks/useEventState'
 import { useToast } from '../components/ui/toast'
-import { ArrowLeft, Lock } from 'lucide-react'
+import { ArrowLeft, Lock, Info } from 'lucide-react'
 
 export default function RateWhiskey() {
   const { id } = useParams()
@@ -33,7 +33,7 @@ export default function RateWhiskey() {
   const [submitted, setSubmitted] = useState(false)
   const [existingRatingId, setExistingRatingId] = useState(null)
 
-  const { data: whiskeys = [] } = useQuery({ queryKey: ['whiskeys'], queryFn: whiskeyApi.list })
+  const { data: whiskeys = [] } = useQuery({ queryKey: ['whiskeys'], queryFn: () => whiskeyApi.list() })
   const { data: ratings = [] } = useQuery({ queryKey: ['ratings'], queryFn: ratingsApi.list })
 
   const whiskey = whiskeys.find(w => w.id === id)
@@ -117,8 +117,11 @@ export default function RateWhiskey() {
               </div>
             </div>
           )}
-          <div className="flex gap-3 justify-center">
+          <div className="flex gap-3 justify-center flex-wrap">
             <Button variant="outline" onClick={() => navigate('/lineup')}>Lineup</Button>
+            <Button variant="outline" onClick={() => navigate(`/whiskey/${id}`)}>
+              <Info className="w-4 h-4 mr-1.5" /> Whiskey Info
+            </Button>
             <Button onClick={() => navigate('/leaderboard')}>View Results</Button>
           </div>
         </motion.div>

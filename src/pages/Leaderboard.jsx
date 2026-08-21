@@ -32,7 +32,7 @@ export default function Leaderboard() {
     return () => supabase.removeChannel(channel)
   }, [queryClient])
 
-  const { data: whiskeys = [], isLoading: wLoading } = useQuery({ queryKey: ['whiskeys'], queryFn: whiskeyApi.list })
+  const { data: whiskeys = [], isLoading: wLoading } = useQuery({ queryKey: ['whiskeys'], queryFn: () => whiskeyApi.list() })
   const { data: ratings = [], isLoading: rLoading } = useQuery({ queryKey: ['ratings'], queryFn: ratingsApi.list })
   const isLoading = wLoading || rLoading
 
