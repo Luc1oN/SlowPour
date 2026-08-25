@@ -111,3 +111,21 @@ body::after {
 @media (prefers-reduced-motion: reduce) {
   .skeleton { animation: none; }
 }
+
+/* ─────────────────────────────────────────────
+   MARKETING SITE MOTION
+   One entrance animation, on load, in CSS. Nothing below the fold is
+   hidden behind a scroll trigger — if the page ever isn't painting,
+   content that only appears "on reveal" is content nobody reads.
+───────────────────────────────────────────── */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rise   { animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .rise-1 { animation-delay: 0.10s; }
+  .rise-2 { animation-delay: 0.25s; }
+  .rise-3 { animation-delay: 0.40s; }
+}

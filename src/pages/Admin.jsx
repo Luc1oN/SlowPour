@@ -8,6 +8,7 @@ import { Button } from '../components/ui/button'
 import { Input, Textarea, Label } from '../components/ui/input'
 import { Switch } from '../components/ui/switch'
 import GoldDivider from '../components/shared/GoldDivider'
+import PastNights from './admin/PastNights'
 import { useToast } from '../components/ui/toast'
 import { STAGES, LAST_STAGE } from '../lib/stages'
 import { Glencairn, PassMark } from '../components/icons/Icons'
@@ -434,7 +435,7 @@ function AdminPanel() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Clear all ratings?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This deletes {ratings.length} rating{ratings.length === 1 ? '' : 's'} from {new Set(ratings.map(r => r.user_name)).size} guest{new Set(ratings.map(r => r.user_name)).size === 1 ? '' : 's'}. It cannot be undone — export the CSV first if you want a record.
+                      This deletes {ratings.length} rating{ratings.length === 1 ? '' : 's'} from {new Set(ratings.map(r => r.user_name)).size} guest{new Set(ratings.map(r => r.user_name)).size === 1 ? '' : 's'} and nothing else. It cannot be undone. To keep the night — whiskeys, scores, notes and standings — save it under Past Nights first.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -561,6 +562,10 @@ function AdminPanel() {
       </div>
 
       <GoldDivider />
+
+      <GoldDivider />
+
+      <PastNights whiskeys={whiskeys} ratings={ratings} />
 
       <h2 className="font-heading text-xl font-semibold text-foreground mb-4">Current Whiskeys</h2>
       <div className="space-y-3">

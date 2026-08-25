@@ -1,9 +1,9 @@
 {
   "name": "The Slow Pour",
   "short_name": "Slow Pour",
-  "description": "Whiskey tasting nights, done properly.",
-  "start_url": "/",
-  "scope": "/",
+  "description": "Tasting nights, done properly.",
+  "start_url": "/app",
+  "scope": "/app",
   "display": "standalone",
   "background_color": "#171009",
   "theme_color": "#171009",

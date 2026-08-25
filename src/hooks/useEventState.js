@@ -30,12 +30,22 @@ export function useEventState() {
   const eventState = eventStates[0] || {}
 
   const updateMutation = useMutation({
-    mutationFn: (data) => {
+    // Never create a second settings row. Tapping a control before the
+    // first load finished used to land here with an empty eventState and
+    // silently insert a fresh row — six of them accumulated that way, and
+    // whichever one the database returned first became the live night.
+    // Re-check against the database before concluding there isn't one.
+    mutationFn: async (data) => {
       if (eventState?.id) {
         return eventStateApi.update(eventState.id, data)
-      } else {
-        return eventStateApi.create(data)
       }
+
+      const existing = await eventStateApi.list()
+      if (existing?.[0]?.id) {
+        return eventStateApi.update(existing[0].id, data)
+      }
+
+      return eventStateApi.create(data)
     },
     onMutate: async (newData) => {
       await queryClient.cancelQueries({ queryKey: ['eventState'] })
