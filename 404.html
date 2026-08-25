@@ -1,14 +1,23 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <script>
-    var l = window.location;
-    l.replace(
-      l.protocol + '//' + l.host + '/' +
-      '?p=/' + l.pathname.slice(1) +
-      (l.search ? '&q=' + l.search.slice(1) : '') +
-      l.hash
-    );
-  </script>
-</head>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>The Slow Pour</title>
+    <script>
+      // GitHub Pages serves this file for any path it has no file for —
+      // e.g. /app/whiskey/123. Stash the real path in the query string and
+      // bounce to index.html, which puts it back and lets the router take
+      // over. /, /events, /about and /app are real files and never get here.
+      (function () {
+        var l = window.location
+        l.replace(
+          l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+          '/?/' + l.pathname.slice(1).replace(/&/g, '~and~') +
+          (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+          l.hash
+        )
+      })()
+    </script>
+  </head>
+  <body></body>
 </html>
