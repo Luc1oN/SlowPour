@@ -36,7 +36,7 @@
           var path = h.slice(1)
           window.location.replace('/app' + (path === '/' ? '' : path))
         }
-      })()
+      })();
 
       // 2. Deep app links. GitHub Pages has no file at /app/whiskey/123, so it
       //    serves 404.html, which bounces here with the path in the query
@@ -50,7 +50,7 @@
             .join('?')
           window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash)
         }
-      })(window.location)
+      })(window.location);
     </script>
   </head>
   <body>
